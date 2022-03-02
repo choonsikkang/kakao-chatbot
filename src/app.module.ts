@@ -9,7 +9,7 @@ import { basket } from './coffee/entity/basket.entity';
   imports: [
     TypeOrmModule.forRoot({
       type: 'mysql',
-      host: '34.64.252.67',
+      host: process.env.TYPEORM_HOST,
       port: 3306,
       username: 'choonsik',
       password: '1234',
