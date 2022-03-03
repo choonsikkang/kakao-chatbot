@@ -1,19 +1,25 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @Entity()
-export class basket {
+export class coffee {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: true })
+  @Column()
   product_id: number;
 
-  @Column({ nullable: true })
-  basket_id: number;
-
-  @Column({ nullable: true, unique: true })
+  @Column()
   name: string;
 
-  @Column({ nullable: true })
+  @Column()
   amount: number;
+
+  @Column()
+  price: number;
+
+  @Column()
+  description: string;
+
+  @Column({ nullable: true })
+  image_url: string;
 }
