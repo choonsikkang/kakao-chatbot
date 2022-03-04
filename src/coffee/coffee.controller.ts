@@ -1,37 +1,35 @@
-import { Body, Controller, Delete, Post, Patch, Res } from '@nestjs/common';
+import { Body, Controller, Post, HttpCode } from '@nestjs/common';
 import { CoffeeService } from './coffee.service';
 import { Logger } from '@nestjs/common';
-import { CreateCoffeeDto, UpdateCoffeeDto } from './dto/CreateCoffee.dto';
-import express, { Response } from 'express';
-import { route } from '../../assets/intent.json';
 
-@Controller('')
+@Controller()
 export class CoffeeController {
   constructor(private coffeeService: CoffeeService) {}
 
-  // @Get()
-  // findAll(): Promise<basket[]> {
-  //   return this.coffeeService.findAll();
-  // }
-
+  // 장바구니에 있는 음료들을 생성 및 조회
   @Post()
-  createCoffee(@Body() CreateCoffeeDto: CreateCoffeeDto, @Res() res: Response) {
-    Logger.log('이것이 카카오에서 답변해주는 JSON', CreateCoffeeDto);
-    const order = this.coffeeService.create(CreateCoffeeDto, res);
+  @HttpCode(201)
+  createCoffee(@Body() CreateCoffee) {
+    Logger.log(CreateCoffee);
+    const order = this.coffeeService.create(CreateCoffee);
     return order;
   }
-  // Patch로는 Body의 값이 안온다. 어찌된 일인지...
+
+  // 장바구니에 담긴 음료들을 수정
   @Post('/change')
-  updateCoffee(@Body() UpdateCoffeeDto: UpdateCoffeeDto, @Res() res: Response) {
-    Logger.log('이것이 카카오에서 답변해주는 JSON', UpdateCoffeeDto);
-    const order_change = this.coffeeService.update(UpdateCoffeeDto, res);
-    Logger.log(order_change);
+  @HttpCode(200)
+  updateCoffee(@Body() UpdateCoffee) {
+    const order_change = this.coffeeService.update(UpdateCoffee);
     return order_change;
   }
 
+  // 장바구니에 있는 음료를 모두 삭제
   @Post('/order_cancel')
-  deleteCoffee(@Res() res: Response) {
-    const order_cancel = this.coffeeService.delete(res);
+  @HttpCode(200)
+  deleteCoffee() {
+    const order_cancel = this.coffeeService.delete();
     return order_cancel;
   }
+
+  // 장바구니에 있는 음료의 종류, 개수를 합산하여, 총합이 얼마인지 조회
 }

@@ -1,11 +1,9 @@
-import { Body, Res, HttpStatus } from '@nestjs/common';
+import { Body } from '@nestjs/common';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { basket } from './entity/basket.entity';
 import { Logger } from '@nestjs/common';
-import express, { Response } from 'express';
-import { coffee } from './entity/coffee.entity';
 import { getConnection } from 'typeorm';
 
 @Injectable()
@@ -15,12 +13,7 @@ export class CoffeeService {
     private basketRepository: Repository<basket>,
   ) {}
 
-  // findAll(): Promise<basket[]> {
-  //   return this.basketRepository.find();
-  // }
-
-  // 장바구니에 먹고 싶은 음료를 생성 및 조회
-  async create(@Body() coffee, @Res() res: Response) {
+  async create(@Body() coffee) {
     try {
       const response = this.basketRepository.create({
         name: coffee.action.detailParams.coffee_name.value,
@@ -34,7 +27,6 @@ export class CoffeeService {
 
       let text: string = '';
       for (let category of basketCoffee) {
-        // Logger.log(JSON.stringify(category));
         text += category.name + ' ' + '>' + ' ' + category.amount + '개' + '\n';
       }
 
@@ -67,15 +59,14 @@ export class CoffeeService {
           ],
         },
       };
-      res.status(HttpStatus.OK).json(responseBody);
+      // res.status(HttpStatus.OK).json(responseBody);
+      return responseBody;
     } catch (err) {
       Logger.log('이것이 에러인가요?', err);
     }
   }
 
-  // 장바구니에 있는 음료를 변경
-  async update(@Body() coffee, @Res() res: Response) {
-    // Logger.log('이것이 카카오에서 답변해주는 JSON', coffee);
+  async update(@Body() coffee) {
     await getConnection()
       .createQueryBuilder()
       .update(basket)
@@ -87,17 +78,6 @@ export class CoffeeService {
         name: coffee.action.detailParams.coffee_name.value,
       })
       .execute();
-
-    // const repo = this.basketRepository.update(coffee, res);
-    // await repo.update(
-    //   {
-    //     name: coffee.action.detailParams.coffee_name.value,
-    //     amount: coffee.action.detailParams.CupCount.origin,
-    //   },
-    //   {
-    //     data: `update`,
-    //   },
-    // );
 
     // 장바구니 조회
     let basketCoffee = await this.basketRepository.find();
@@ -119,11 +99,10 @@ export class CoffeeService {
         ],
       },
     };
-    res.status(200).send(responseBody);
+    return responseBody;
   }
 
-  // 장바구니에 있는 음료를 모두 삭제
-  async delete(@Res() res: Response) {
+  async delete() {
     await this.basketRepository.clear();
 
     const responseBody = {
@@ -138,6 +117,6 @@ export class CoffeeService {
         ],
       },
     };
-    res.status(200).send(responseBody);
+    return responseBody;
   }
 }
