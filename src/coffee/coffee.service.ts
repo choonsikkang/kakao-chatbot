@@ -30,6 +30,22 @@ export class CoffeeService {
         text += category.name + ' ' + '>' + ' ' + category.amount + '개' + '\n';
       }
 
+      // 장바구니에 있는 음료의 종류, 개수를 합산하여, 총합이 얼마인지 조회
+      const total = await this.basketRepository
+        .createQueryBuilder()
+        .select(['basket.name', 'basket.amount', 'SUM(price*amount) AS total'])
+        .innerJoin('coffee', 'coffee')
+        .where('coffee.name = basket.name')
+        .groupBy('basket.id')
+        .getRawMany();
+
+      let sum: number = 0;
+      total.forEach((el) => {
+        // Logger.log(JSON.stringify(el));
+        sum += Number(el.total);
+        Logger.log(typeof sum);
+      });
+
       const responseBody = {
         version: '2.0',
         template: {
@@ -41,7 +57,7 @@ export class CoffeeService {
             },
             {
               simpleText: {
-                text: `합계 - 4500원`,
+                text: `합계 - ${sum}원`,
               },
             },
           ],
@@ -49,17 +65,16 @@ export class CoffeeService {
             {
               action: 'block',
               label: '주문 끝',
-              // blockId: process.env.confirm_blockId,
+              blockId: '6203772fba2e0d2c1179579b',
             },
             {
               action: 'block',
               label: '주문 수정하기',
-              // blockId: process.env.modify_blockId,
+              blockId: '6205d90cca92880f0b4e5c6b',
             },
           ],
         },
       };
-      // res.status(HttpStatus.OK).json(responseBody);
       return responseBody;
     } catch (err) {
       Logger.log('이것이 에러인가요?', err);
@@ -87,6 +102,22 @@ export class CoffeeService {
       text += category.name + ' ' + '>' + ' ' + category.amount + '개' + '\n';
     }
 
+    // 장바구니에 있는 음료의 종류, 개수를 합산하여, 총합이 얼마인지 조회
+    const total = await this.basketRepository
+      .createQueryBuilder()
+      .select(['basket.name', 'basket.amount', 'SUM(price*amount) AS total'])
+      .innerJoin('coffee', 'coffee')
+      .where('coffee.name = basket.name')
+      .groupBy('basket.id')
+      .getRawMany();
+
+    let sum: number = 0;
+    total.forEach((el) => {
+      // Logger.log(JSON.stringify(el));
+      sum += Number(el.total);
+      Logger.log(typeof sum);
+    });
+
     const responseBody = {
       version: '2.0',
       template: {
@@ -94,6 +125,11 @@ export class CoffeeService {
           {
             simpleText: {
               text: `++장바구니++\n-----------------------------\n${text}`,
+            },
+          },
+          {
+            simpleText: {
+              text: `합계 - ${sum}원`,
             },
           },
         ],

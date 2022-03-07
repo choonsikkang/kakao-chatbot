@@ -1,7 +1,5 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get, Post } from '@nestjs/common';
 import { AppService } from './app.service';
-// const config = require('../assets/intent.json');
-// import * as config from '../assets/intent.json';
 
 @Controller()
 export class AppController {
