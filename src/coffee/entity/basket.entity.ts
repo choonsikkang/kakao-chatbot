@@ -4,12 +4,6 @@ export class basket {
   @PrimaryGeneratedColumn()
   id: number;
 
-  // @Column({ nullable: true })
-  // product_id: string;
-
-  // @Column({ nullable: true })
-  // basket_id: number;
-
   @Column({ nullable: true, unique: true })
   name: string;
 
