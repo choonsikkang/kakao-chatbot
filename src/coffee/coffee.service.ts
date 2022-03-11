@@ -23,7 +23,6 @@ export class CoffeeService {
 
       // // 장바구니에 있는 모든 상품들을 조회
       let basketCoffee = await this.basketRepository.find();
-      // Logger.log('All baskets from the db: ', JSON.stringify(basketCoffee));
 
       let text: string = '';
       for (let category of basketCoffee) {
@@ -42,8 +41,6 @@ export class CoffeeService {
       let sum: number = 0;
       total.forEach((el) => {
         sum += Number(el.total);
-        // Logger.log(JSON.stringify(el));
-        // Logger.log(typeof sum);
       });
 
       const responseBody = {
@@ -160,67 +157,67 @@ export class CoffeeService {
     };
     return responseBody;
   }
-  
+
   async menu() {
-      const responseBody = {
-        version: '2.0',
-        template: {
-          outputs: [
-            {
-              simpleText: {
-                text: '안녕 난 애기 메뉴판!😁',
-              },
+    const responseBody = {
+      version: '2.0',
+      template: {
+        outputs: [
+          {
+            simpleText: {
+              text: '안녕 난 애기 메뉴판!😁',
             },
-          ],
-          quickReplies: [
-            {
-              messageText: '커피',
-              action: 'message',
-              label: '커피',
-            },
-            {
-              messageText: '음료',
-              action: 'message',
-              label: '음료',
-            },
-            {
-              messageText: '스페셜',
-              action: 'message',
-              label: '스페셜',
-            },
-            {
-              messageText: '차',
-              action: 'message',
-              label: '차',
-            },
-          ],
-        },
-      };
-      return responseBody;
+          },
+        ],
+        quickReplies: [
+          {
+            messageText: '커피',
+            action: 'message',
+            label: '커피',
+          },
+          {
+            messageText: '음료',
+            action: 'message',
+            label: '음료',
+          },
+          {
+            messageText: '스페셜',
+            action: 'message',
+            label: '스페셜',
+          },
+          {
+            messageText: '차',
+            action: 'message',
+            label: '차',
+          },
+        ],
+      },
+    };
+    return responseBody;
   }
 
   async confirm() {
-      // 장바구니에 있는 모든 상품들을 조회
-      let basketCoffee = await this.basketRepository.find();
+    // 장바구니에 있는 모든 상품들을 조회
+    let basketCoffee = await this.basketRepository.find();
 
-      let text: string = '';
-      for (let category of basketCoffee) {
-        text += category.name + ' ' + '>' + ' ' + category.amount + '개' + '\n';
-      }
+    let text: string = '';
+    for (let category of basketCoffee) {
+      text += category.name + ' ' + '>' + ' ' + category.amount + '개' + '\n';
+    }
 
-      // 장바구니에 있는 음료의 종류, 개수를 합산하여, 총합이 얼마인지 조회
-      const total = await this.basketRepository
-        .createQueryBuilder()
-        .select(['basket.name', 'basket.amount', 'SUM(price*amount) AS total'])
-        .innerJoin('coffee', 'coffee')
-        .where('coffee.name = basket.name')
-        .groupBy('basket.id')
-        .getRawMany();
+    // 장바구니에 있는 음료의 종류, 개수를 합산하여, 총합이 얼마인지 조회
+    const total = await this.basketRepository
+      .createQueryBuilder()
+      .select(['basket.name', 'basket.amount', 'SUM(price*amount) AS total'])
+      .innerJoin('coffee', 'coffee')
+      .where('coffee.name = basket.name')
+      .groupBy('basket.id')
+      .getRawMany();
 
-      let sum: number = 0;
-      total.forEach((el) => {
-        sum += Number(el.total);
-      });
+    let sum: number = 0;
+    total.forEach((el) => {
+      sum += Number(el.total);
+    });
 
     const responseBody = {
       version: '2.0',

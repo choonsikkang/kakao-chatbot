@@ -11,6 +11,7 @@ dotenv.config();
 
 @Module({
   imports: [
+    TypeOrmModule.forFeature([basket, coffee, user]),
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.TYPEORM_HOST,
